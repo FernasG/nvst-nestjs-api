@@ -1,5 +1,10 @@
 version: '3.9'
 
+networks:
+  nvst-network:
+    name: nvst-network
+    driver: bridge
+
 services:
   nvst-nestjs-api:
     build: .
@@ -13,7 +18,17 @@ services:
       - ${PWD}:/app
     networks:
       - nvst-network
-
-networks:
-  nvst-network:
-    external: true
+    depends_on:
+      - postgres
+    
+  postgres:
+    image: postgres
+    restart: always
+    container_name: postgres
+    environment:
+      - POSTGRES_PASSWORD=vXMI0QI8bXq2
+      - TZ=America/Sao_Paulo
+    ports:
+      - 5432:5432
+    networks:
+      - nvst-network
