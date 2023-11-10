@@ -12,7 +12,7 @@ export class UsersService {
 
     const user = await this.prismaService.users.findFirst({ where: { OR: [{ email }, { cpf }] } });
 
-    if (user) throw new BadRequestException('Email or CPF already in use');
+    if (user) throw new BadRequestException('Email or CPF already in use.');
 
     const passwordHash = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
     const data = { email, cpf, name, password: passwordHash };

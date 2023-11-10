@@ -1,45 +1,68 @@
-import { Injectable } from '@nestjs/common';
-import { Prisma, revenues } from '@prisma/client';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/database';
+import { CreateRevenueDto, FindAllRevenuesDto, UpdateRevenueDto } from './revenues.interface';
 
 @Injectable()
 export class RevenuesService {
   constructor(private readonly prismaService: PrismaService) { }
 
-  public async create(data: Prisma.revenuesCreateInput): Promise<revenues> {
+  public async create(createRevenueDto: CreateRevenueDto) {
+    const { title, description, recurrence, userId, value } = createRevenueDto;
+
+    const user = await this.prismaService.users.findUnique({ where: { id: userId } });
+
+    if (!user) throw new NotFoundException('User not found.');
+
+    if (!['monthly', 'daily', 'weekly'].includes(recurrence)) throw new BadRequestException('Invalid recurrence parameter.');
+
+    if (value < 1) throw new BadRequestException('Invalid value parameter');
+
+    const data = { title, description, recurrence, userId, value };
+
     return this.prismaService.revenues.create({ data });
   }
 
-  public async findAll(params: {
-    skip?: number;
-    take?: number;
-    cursor?: Prisma.revenuesWhereUniqueInput;
-    where?: Prisma.revenuesWhereInput;
-    orderBy?: Prisma.revenuesOrderByWithRelationInput;
-  }): Promise<revenues[]> {
-    const { skip, take, cursor, where, orderBy } = params;
-    return this.prismaService.revenues.findMany({
-      skip,
-      take,
-      where,
-      cursor,
-      orderBy
-    });
+  public async findAll(findAllRevenueDto: FindAllRevenuesDto) {
+    const { skip, take, userId } = findAllRevenueDto;
+
+    const user = await this.prismaService.users.findUnique({ where: { id: +userId } });
+
+    if (!user) throw new NotFoundException('User not found.');
+
+    return this.prismaService.revenues.findMany({ skip, take, where: { userId: +userId } });
   }
 
-  public async findOne(revenueWhereUniqueInput: Prisma.revenuesWhereUniqueInput): Promise<revenues | null> {
-    return this.prismaService.revenues.findUnique({ where: revenueWhereUniqueInput });
+  public async findOne(revenueId: number) {
+    const revenue = await this.prismaService.revenues.findUnique({ where: { id: revenueId } });
+
+    if (!revenue) throw new NotFoundException('Revenue not found.');
+
+    return revenue;
   }
 
-  public async update(params: {
-    where: Prisma.revenuesWhereUniqueInput;
-    data: Prisma.revenuesUpdateInput;
-  }): Promise<revenues> {
-    const { where, data } = params;
-    return this.prismaService.revenues.update({ data, where });
+  public async update(revenueId: number, updateRevenueDto: UpdateRevenueDto) {
+    const revenue = await this.prismaService.revenues.findUnique({ where: { id: revenueId } });
+
+    if (!revenue) throw new NotFoundException('Revenue not found.');
+
+    const { title, description, recurrence, value } = updateRevenueDto;
+
+    const data: UpdateRevenueDto = {};
+
+    if (title) data.title = title;
+    if (value && value > 0) data.value = value;
+    if (description) data.description = description;
+    if (recurrence && ['monthly', 'daily', 'weekly'].includes(recurrence)) data.recurrence = recurrence;
+
+    return this.prismaService.revenues.update({ data, where: { id: revenueId } });
   }
 
-  public async remove(where: Prisma.revenuesWhereUniqueInput): Promise<revenues> {
-    return this.prismaService.revenues.delete({ where });
+  public async remove(revenueId: number) {
+    const revenue = await this.prismaService.revenues.findUnique({ where: { id: revenueId } });
+
+    if (!revenue) throw new NotFoundException('Revenue not found.');
+
+    return this.prismaService.revenues.delete({ where: { id: revenueId } });
   }
 }
