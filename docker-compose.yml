@@ -1,0 +1,19 @@
+version: '3.9'
+
+services:
+  nvst-nestjs-api:
+    build: .
+    container_name: nvst-nestjs-api
+    image: nvst-nestjs-api:latest
+    env_file:
+      - .env
+    environment:
+      - TZ=America/Sao_Paulo
+    volumes:
+      - ${PWD}:/app
+    networks:
+      - nvst-network
+
+networks:
+  nvst-network:
+    external: true
