@@ -7,27 +7,27 @@ export class RevenuesController {
   constructor(private readonly revenuesService: RevenuesService) { }
 
   @Post()
-  create(@Body() createRevenueDto: CreateRevenueDto) {
+  public async create(@Body() createRevenueDto: CreateRevenueDto) {
     return this.revenuesService.create(createRevenueDto);
   }
 
   @Get()
-  findAll(@Query() findAllRevenueDto: FindAllRevenuesDto) {
+  public async findAll(@Query() findAllRevenueDto: FindAllRevenuesDto) {
     return this.revenuesService.findAll(findAllRevenueDto);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  public async findOne(@Param('id') id: string) {
     return this.revenuesService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRevenueDto: UpdateRevenueDto) {
+  public async update(@Param('id') id: string, @Body() updateRevenueDto: UpdateRevenueDto) {
     return this.revenuesService.update(+id, updateRevenueDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  public async remove(@Param('id') id: string) {
     return this.revenuesService.remove(+id);
   }
 }
