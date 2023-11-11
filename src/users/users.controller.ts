@@ -1,8 +1,8 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Req, HttpCode, HttpStatus } from '@nestjs/common';
 import { CreateUserDto, FindAllUsersDto, UpdateUserDto } from './users.interface';
+import { AuthenticationService } from '@authentication';
+import { LocalAuthGuard } from '@guards';
 import { UsersService } from './users.service';
-import { LocalAuthGuard } from 'src/guards';
-import { AuthenticationService } from 'src/authentication';
 
 @Controller('users')
 export class UsersController {

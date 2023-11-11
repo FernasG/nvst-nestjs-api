@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateRevenueDto, FindAllRevenuesDto, UpdateRevenueDto } from './revenues.interface';
-import { PrismaService } from 'src/database';
+import { PrismaService } from '@database';
 
 @Injectable()
 export class RevenuesService {

@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto, FindAllUsersDto, UpdateUserDto } from './users.interface';
-import { PrismaService } from 'src/database';
+import { PrismaService } from '@database';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
