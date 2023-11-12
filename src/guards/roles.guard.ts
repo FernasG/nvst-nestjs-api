@@ -11,22 +11,20 @@ export class RolesGuard implements CanActivate {
   ) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    return true;
+    const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
+      context.getHandler(), context.getClass()
+    ]);
 
-    // const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
-    //   context.getHandler(), context.getClass()
-    // ]);
+    if (!requiredRoles) return true;
 
-    // if (!requiredRoles) return true;
+    const { user } = context.switchToHttp().getRequest();
 
-    // const { user } = context.switchToHttp().getRequest();
+    const userRoles = await this.prismaService.users_roles.findMany({ where: { user: user.id }, select: { role_id: true } });
+    const roleIds = userRoles.map(userRole => userRole.role_id);
 
-    // const userRoles = await this.datasource.getRepository(UsersRoles).find({ where: { user_id: user.id }, select: ['role_id'] });
-    // const roleIds = userRoles.map(userRole => userRole.role_id);
+    const roles = await this.prismaService.roles.findMany({ where: { id: { in: roleIds } } });
+    user.roles = roles;
 
-    // const roles = await this.datasource.getRepository(Roles).find({ where: { id: In(roleIds) } });
-    // user.roles = roles;
-
-    // return requiredRoles.some((role) => user.roles?.includes(role));
+    return requiredRoles.some((role) => user.roles?.includes(role));
   }
 }

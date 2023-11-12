@@ -29,7 +29,7 @@ export class RevenuesService {
 
     if (!user) throw new NotFoundException('User not found.');
 
-    return this.prismaService.revenues.findMany({ skip, take, where: { userId: +userId } });
+    return this.prismaService.revenues.findMany({ skip, take, where: { user_id: +userId } });
   }
 
   public async findOne(revenueId: number) {

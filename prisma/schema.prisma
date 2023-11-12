@@ -11,15 +11,16 @@ datasource db {
 }
 
 model users {
-  id         Int        @id @default(autoincrement())
-  name       String     @db.VarChar(255)
-  email      String     @unique @db.VarChar(120)
-  password   String     @db.VarChar(100)
-  cpf        String     @unique @db.VarChar(14)
-  created_at DateTime   @default(now())
-  updated_at DateTime   @updatedAt
-  deleted_at DateTime?
-  revenues   revenues[]
+  id          Int           @id @default(autoincrement())
+  name        String        @db.VarChar(255)
+  email       String        @unique @db.VarChar(120)
+  password    String        @db.VarChar(100)
+  cpf         String        @unique @db.VarChar(14)
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
+  deleted_at  DateTime?
+  revenues    revenues[]
+  users_roles users_roles[]
 }
 
 model revenues {
@@ -28,17 +29,26 @@ model revenues {
   description String?   @db.VarChar(255)
   recurrence  String    @db.VarChar(50)
   value       Decimal
-  user        users?    @relation(fields: [userId], references: [id])
-  userId      Int?
+  user        users?    @relation(fields: [user_id], references: [id])
+  user_id     Int
   created_at  DateTime  @default(now())
   updated_at  DateTime  @updatedAt
   deleted_at  DateTime?
 }
 
 model roles {
-  id          Int      @id @default(autoincrement())
-  name        String   @unique @db.VarChar(255)
-  description String?  @db.VarChar(255)
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  id          Int           @id @default(autoincrement())
+  name        String        @unique @db.VarChar(255)
+  description String?       @db.VarChar(255)
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
+  users_roles users_roles[]
+}
+
+model users_roles {
+  id      Int    @id @default(autoincrement())
+  user_id Int
+  role_id Int
+  user    users? @relation(fields: [user_id], references: [id])
+  role    roles? @relation(fields: [role_id], references: [id])
 }

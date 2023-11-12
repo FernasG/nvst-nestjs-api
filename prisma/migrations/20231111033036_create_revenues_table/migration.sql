@@ -5,7 +5,7 @@ CREATE TABLE "revenues" (
     "description" VARCHAR(255),
     "recurrence" VARCHAR(50) NOT NULL,
     "value" DECIMAL(65,30) NOT NULL,
-    "userId" INTEGER,
+    "user_id" INTEGER NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
     "deleted_at" TIMESTAMP(3),
@@ -14,4 +14,4 @@ CREATE TABLE "revenues" (
 );
 
 -- AddForeignKey
-ALTER TABLE "revenues" ADD CONSTRAINT "revenues_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "revenues" ADD CONSTRAINT "revenues_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
