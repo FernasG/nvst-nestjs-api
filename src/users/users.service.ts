@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateUserDto, FindAllUsersDto, UpdateUserDto } from './users.interface';
 import { PrismaService } from '@database';
+import { Roles } from '@auth';
 import * as bcrypt from 'bcrypt';
-import { Role } from '@guards';
 
 @Injectable()
 export class UsersService {
@@ -21,7 +21,7 @@ export class UsersService {
 
     if (!user) throw new InternalServerErrorException('Failed to create your account.');
 
-    const role = await this.prismaService.roles.findUnique({ where: { name: Role.User } });
+    const role = await this.prismaService.roles.findUnique({ where: { name: Roles.User } });
 
     await this.prismaService.users_roles.create({ data: { user_id: user.id, role_id: role.id } });
 
@@ -61,6 +61,8 @@ export class UsersService {
     const user = await this.prismaService.users.findUnique({ where: { id: userId } });
 
     if (!user) throw new NotFoundException('User not found.');
+
+    await this.prismaService.users_roles.deleteMany({ where: { user_id: user.id } });
 
     return this.prismaService.users.delete({ where: { id: userId } });
   }
