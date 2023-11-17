@@ -7,9 +7,9 @@ export class RevenuesService {
   constructor(private readonly prismaService: PrismaService) { }
 
   public async create(createRevenueDto: CreateRevenueDto) {
-    const { title, description, recurrence, userId, value } = createRevenueDto;
+    const { title, description, recurrence, user_id, value } = createRevenueDto;
 
-    const user = await this.prismaService.users.findUnique({ where: { id: userId } });
+    const user = await this.prismaService.users.findUnique({ where: { id: user_id } });
 
     if (!user) throw new NotFoundException('User not found.');
 
@@ -17,19 +17,19 @@ export class RevenuesService {
 
     if (value < 1) throw new BadRequestException('Invalid value parameter');
 
-    const data = { title, description, recurrence, userId, value };
+    const data = { title, description, recurrence, user_id, value };
 
     return this.prismaService.revenues.create({ data });
   }
 
   public async findAll(findAllRevenueDto: FindAllRevenuesDto) {
-    const { skip, take, userId } = findAllRevenueDto;
+    const { skip, take, user_id } = findAllRevenueDto;
 
-    const user = await this.prismaService.users.findUnique({ where: { id: +userId } });
+    const user = await this.prismaService.users.findUnique({ where: { id: +user_id } });
 
     if (!user) throw new NotFoundException('User not found.');
 
-    return this.prismaService.revenues.findMany({ skip, take, where: { user_id: +userId } });
+    return this.prismaService.revenues.findMany({ skip, take, where: { user_id: +user_id } });
   }
 
   public async findOne(revenueId: number) {

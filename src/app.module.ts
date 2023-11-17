@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
-import { PrismaModule } from './database';
 import { ConfigModule } from '@nestjs/config';
-import { RevenuesModule } from './revenues/revenues.module';
-import { UsersModule } from './users/users.module';
+import { PrismaModule } from '@database';
 import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
+import { CoursesModule } from './courses/courses.module';
+import { RevenuesModule } from './revenues/revenues.module';
 import config from './configuration/config';
 
 @Module({
@@ -12,6 +13,7 @@ import config from './configuration/config';
     AuthModule,
     UsersModule,
     PrismaModule,
+    CoursesModule,
     RevenuesModule
   ]
 })

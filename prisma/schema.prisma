@@ -52,3 +52,13 @@ model users_roles {
   user    users? @relation(fields: [user_id], references: [id])
   role    roles? @relation(fields: [role_id], references: [id])
 }
+
+model courses {
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(255)
+  description String    @db.VarChar(255)
+  duration    Int
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  deleted_at  DateTime?
+}

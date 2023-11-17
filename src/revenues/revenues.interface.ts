@@ -2,14 +2,14 @@ export class CreateRevenueDto {
   title: string;
   description: string;
   recurrence: string;
-  userId: number;
+  user_id: number;
   value: number;
 }
 
 export class FindAllRevenuesDto {
   skip?: number;
   take?: number;
-  userId: number;
+  user_id: number;
 }
 
 export class UpdateRevenueDto {
