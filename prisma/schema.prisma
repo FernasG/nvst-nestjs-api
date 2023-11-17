@@ -21,6 +21,7 @@ model users {
   deleted_at  DateTime?
   revenues    revenues[]
   users_roles users_roles[]
+  expenses    expenses[]
 }
 
 model revenues {
@@ -58,6 +59,21 @@ model courses {
   name        String    @db.VarChar(255)
   description String    @db.VarChar(255)
   duration    Int
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  deleted_at  DateTime?
+}
+
+model expenses {
+  id          Int       @id @default(autoincrement())
+  title       String    @db.VarChar(255)
+  description String?   @db.VarChar(255)
+  category    String    @db.VarChar(255)
+  value       Decimal
+  date        DateTime  @db.Date
+  payment     String    @db.VarChar(255)
+  user        users?    @relation(fields: [user_id], references: [id])
+  user_id     Int
   created_at  DateTime  @default(now())
   updated_at  DateTime  @updatedAt
   deleted_at  DateTime?
