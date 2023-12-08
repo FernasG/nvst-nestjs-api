@@ -15,7 +15,7 @@ services:
     environment:
       - TZ=America/Sao_Paulo
     ports:
-      - 3000:3000
+      - 3100:3000
     volumes:
       - ${PWD}:/app
     networks:

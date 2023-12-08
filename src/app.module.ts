@@ -6,6 +6,7 @@ import { UsersModule } from './users/users.module';
 import { CoursesModule } from './courses/courses.module';
 import { RevenuesModule } from './revenues/revenues.module';
 import { ExpensesModule } from './expenses/expenses.module';
+import { CampaignsModule } from './campaigns/campaigns.module';
 import config from './configuration/config';
 
 @Module({
@@ -16,7 +17,8 @@ import config from './configuration/config';
     PrismaModule,
     CoursesModule,
     RevenuesModule,
-    ExpensesModule
+    ExpensesModule,
+    CampaignsModule
   ]
 })
 export class AppModule { }

@@ -47,7 +47,7 @@ export class CoursesService {
     const data: UpdateCourseDto = {};
 
     if (name) data.name = name;
-    if (duration) data.duration;
+    if (duration) data.duration = duration;
     if (description) data.description = description;
 
     return this.prismaService.courses.update({ where: { id: courseId }, data });
