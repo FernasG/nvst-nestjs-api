@@ -1,6 +1,7 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateUserDto, FindAllUsersDto, UpdateUserDto } from './users.interface';
-import { PrismaService } from 'src/database';
+import { PrismaService } from '@database';
+import { Roles } from '@auth';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -10,14 +11,21 @@ export class UsersService {
   public async create(createUserDto: CreateUserDto) {
     const { email, cpf, name, password } = createUserDto;
 
-    const user = await this.prismaService.users.findFirst({ where: { OR: [{ email }, { cpf }] } });
+    const userExists = await this.prismaService.users.findFirst({ where: { OR: [{ email }, { cpf }] } });
 
-    if (user) throw new BadRequestException('Email or CPF already in use.');
+    if (userExists) throw new BadRequestException('Email or CPF already in use.');
 
     const passwordHash = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
     const data = { email, cpf, name, password: passwordHash };
+    const user = await this.prismaService.users.create({ data });
 
-    return this.prismaService.users.create({ data });
+    if (!user) throw new InternalServerErrorException('Failed to create your account.');
+
+    const role = await this.prismaService.roles.findUnique({ where: { name: Roles.User } });
+
+    await this.prismaService.users_roles.create({ data: { user_id: user.id, role_id: role.id } });
+
+    return user;
   }
 
   public async findAll(params: FindAllUsersDto) {
@@ -53,6 +61,8 @@ export class UsersService {
     const user = await this.prismaService.users.findUnique({ where: { id: userId } });
 
     if (!user) throw new NotFoundException('User not found.');
+
+    await this.prismaService.users_roles.deleteMany({ where: { user_id: user.id } });
 
     return this.prismaService.users.delete({ where: { id: userId } });
   }
